@@ -20,13 +20,6 @@ const pool = require('../database_settings/db');
 //   await pool.query('DELETE FROM users WHERE id = $1', [id]);
 // };
 
-// const getOpening = async () => {
-//   const result = {
-//     "title": "User",
-//     "description": "List of users",
-//   }
-//   return result;
-// };
 
 // CRUD for closed_mosques table
 const createClosedMosque = async (mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes) => {

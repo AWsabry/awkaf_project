@@ -1,6 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
+const { STATIC_STRINGS } = require('../static/constants.ts');
+
+
 router.use(bodyParser.json());
 
 
@@ -10,16 +13,11 @@ const {
   getBlockedProjects,
   updateBlockedProject,
   deleteBlockedProject,
-  getOpening
 } = require('../Models/blockedProjectsModel');
 
 
 
 
-router.get('/', async (req, res) => {
-  const opening = await getOpening();
-  res.json(opening);
-});
 // Blocked Projects Routes
 router.post('/blocked-projects', async (req, res) => {
   const { mosque_name_ar, directorate, mosque_address, contract_date, delay_reasons, contractor_name, actions_taken, latest_update, resolution_status } = req.body;
@@ -42,7 +40,7 @@ router.put('/blocked-projects/:id', async (req, res) => {
 router.delete('/blocked-projects/:id', async (req, res) => {
   const { id } = req.params;
   await deleteBlockedProject(id);
-  res.json({ message: 'Item deleted successfully',status: 200 ,});
+  res.json({ message: STATIC_STRINGS.OPERATIONS.DELETE_SUCCESS, status: 200 });
   res.sendStatus(204);
 });
 

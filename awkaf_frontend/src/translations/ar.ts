@@ -8,6 +8,7 @@ export interface Translations {
   auth: {
     login: string;
     username: string;
+    email: string;
     password: string;
     submit: string;
     welcome: string;
@@ -77,6 +78,7 @@ export const ar: Translations = {
   },
   auth: {
     login: "تسجيل الدخول",
+    email: "البريد الإلكتروني",
     username: "اسم المستخدم",
     password: "كلمة المرور",
     submit: "دخول",

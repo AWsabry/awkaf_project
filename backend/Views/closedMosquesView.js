@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = express.Router();
+const { STATIC_STRINGS } = require('../static/constants.ts');
 
 
 router.use(bodyParser.json());
@@ -36,7 +37,7 @@ router.put('/closed-mosques/:id', async (req, res) => {
 router.delete('/closed-mosques/:id', async (req, res) => {
   const { id } = req.params;
   await deleteClosedMosque(id);
-  res.json({ message: 'Item deleted successfully', status: 200 });
+res.json({ message: STATIC_STRINGS.OPERATIONS.DELETE_SUCCESS, status: 200 });
 });
 
 module.exports = router;

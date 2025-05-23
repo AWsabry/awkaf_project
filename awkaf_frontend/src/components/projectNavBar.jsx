@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { ar } from "../translations/ar.ts"; // Adjust the import path as necessary
+import { ar } from "../translations/ar.ts";
+import { FaSignOutAlt } from "react-icons/fa";
+import "./projectNavBar.css";
 
 export default function ProjectNavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="navbar navbar-expand-lg mb-4" style={{ backgroundColor: "#d4af37" }}>
+    <nav className="navbar navbar-expand-lg mb-4">
       <div className="container-fluid">
-        <Link className="navbar-brand text-white fw-bold" to="/">{ar.navigation.logout}</Link>
+        <Link className="navbar-brand" to="/">
+          <FaSignOutAlt /> {ar.navigation.logout}
+        </Link>
         
         {/* Hamburger menu button */}
         <button 
@@ -26,17 +30,17 @@ export default function ProjectNavBar() {
           <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link className="nav-link text-white" to="/projects" onClick={() => setIsMenuOpen(false)}>
+                <Link className="nav-link" to="/projects" onClick={() => setIsMenuOpen(false)}>
                   {ar.navigation.projects}
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white" to="/mosques" onClick={() => setIsMenuOpen(false)}>
+                <Link className="nav-link" to="/mosques" onClick={() => setIsMenuOpen(false)}>
                   {ar.navigation.mosques}
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white" to="/blocked-projects" onClick={() => setIsMenuOpen(false)}>
+                <Link className="nav-link" to="/blocked-projects" onClick={() => setIsMenuOpen(false)}>
                   {ar.navigation.blockedProjects}
                 </Link>
               </li>

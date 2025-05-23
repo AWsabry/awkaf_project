@@ -6,8 +6,8 @@ router.use(bodyParser.json());
 
 // Hardcoded user credentials
 const user = {
-  email: 'user@example.com',
-  password: 'password123',
+  email: 'awsabry2000@gmail.com',
+  password: '123456',
 };
 
 // Auth endpoint
@@ -22,3 +22,4 @@ router.post('/auth', (req, res) => {
 });
 
 module.exports = router;
+

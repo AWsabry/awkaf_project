@@ -1,17 +1,31 @@
 CREATE TABLE closed_mosques (
-    mosque_id INT PRIMARY KEY AUTO_INCREMENT,
-    mosque_name_ar VARCHAR(255) NOT NULL COMMENT 'اسم المسجد',
-    directorate VARCHAR(100) COMMENT 'المديرية',
-    mosque_address TEXT COMMENT 'عنوان المسجد',
-    closure_date DATE COMMENT 'تاريخ الغلق',
-    closure_reason TEXT COMMENT 'سبب الغلق',
-    mosque_area DECIMAL(8,2) COMMENT 'مساحة المسجد',
-    nearest_mosque VARCHAR(255) COMMENT 'أقرب مسجد',
-    population_density VARCHAR(50) COMMENT 'الكثافة السكانية',
-    within_urban_boundary BOOLEAN COMMENT 'داخل الحيز العمراني أم لا',
-    needs_maintenance BOOLEAN COMMENT 'يحتاج صيانة',
-    needs_renovation BOOLEAN COMMENT 'يحتاج إحلال وتجديد',
-    technical_committee_notes TEXT COMMENT 'ملاحظات اللجنة الفنية',
+    mosque_id SERIAL PRIMARY KEY,
+    mosque_name_ar VARCHAR(255) NOT NULL,
+    directorate VARCHAR(100),
+    mosque_address TEXT,
+    closure_date DATE,
+    closure_reason TEXT,
+    mosque_area DECIMAL(8,2),
+    nearest_mosque VARCHAR(255),
+    population_density VARCHAR(50),
+    within_urban_boundary BOOLEAN,
+    needs_maintenance BOOLEAN,
+    needs_renovation BOOLEAN,
+    technical_committee_notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add comments
+COMMENT ON COLUMN closed_mosques.mosque_name_ar IS 'اسم المسجد';
+COMMENT ON COLUMN closed_mosques.directorate IS 'المديرية';
+COMMENT ON COLUMN closed_mosques.mosque_address IS 'عنوان المسجد';
+COMMENT ON COLUMN closed_mosques.closure_date IS 'تاريخ الغلق';
+COMMENT ON COLUMN closed_mosques.closure_reason IS 'سبب الغلق';
+COMMENT ON COLUMN closed_mosques.mosque_area IS 'مساحة المسجد';
+COMMENT ON COLUMN closed_mosques.nearest_mosque IS 'أقرب مسجد';
+COMMENT ON COLUMN closed_mosques.population_density IS 'الكثافة السكانية';
+COMMENT ON COLUMN closed_mosques.within_urban_boundary IS 'داخل الحيز العمراني أم لا';
+COMMENT ON COLUMN closed_mosques.needs_maintenance IS 'يحتاج صيانة';
+COMMENT ON COLUMN closed_mosques.needs_renovation IS 'يحتاج إحلال وتجديد';
+COMMENT ON COLUMN closed_mosques.technical_committee_notes IS 'ملاحظات اللجنة الفنية';
