@@ -108,7 +108,6 @@ npm start
 - PostgreSQL
 - Sequelize ORM
 - JWT Authentication
-- bcryptjs
 - multer (file uploads)
 
 ### Frontend
@@ -116,8 +115,6 @@ npm start
 - React Router
 - Axios
 - Material-UI
-- Formik
-- Yup
 - React Query
 
 ## Security Features
