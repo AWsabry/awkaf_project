@@ -1,10 +1,10 @@
 const express = require('express');
-const authController = require('./Controller/Auth');
 const cors = require('cors');
-
-const blockedProjects = require('./Views/blockedProjectsModel');
+const { sequelize, configureStaticFiles } = require('./database_settings/db');
+const users = require('./Views/UserView');
+const blockedProjects = require('./Views/blockedProjectsView');
 const closedMosques = require('./Views/closedMosquesView');
-const projects = require('./views/projectView');
+const projects = require('./Views/projectView');
 const constructors = require('./Views/constructorsView');
 
 const app = express();
@@ -25,10 +25,19 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Configure static file serving
+configureStaticFiles(app);
+
+// Make sequelize available to routes
+app.use((req, res, next) => {
+  req.sequelize = sequelize;
+  next();
+});
 
 // Registering routes
-app.use('/api', authController);
+app.use('/api', users);
 
 // Registering routes for different models
 app.use('/api', blockedProjects);
@@ -36,8 +45,25 @@ app.use('/api', closedMosques);
 app.use('/api', projects);
 app.use('/api', constructors);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
 
-const PORT = 8080;
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
+
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

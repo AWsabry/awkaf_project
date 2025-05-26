@@ -1,61 +1,138 @@
-const pool = require('../database_settings/db');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database_settings/db');
 
-// // Users Table CRUD
-// const createUser = async (name, email) => {
-//   const result = await pool.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email]);
-//   return result.rows[0];
-// };
+const ClosedMosque = sequelize.define('ClosedMosque', {
+    mosque_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    mosque_name_ar: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        comment: 'اسم المسجد'
+    },
+    directorate: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: 'المديرية'
+    },
+    mosque_address: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'عنوان المسجد'
+    },
+    closure_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: 'تاريخ الغلق'
+    },
+    closure_reason: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'سبب الغلق'
+    },
+    mosque_area: {
+        type: DataTypes.DECIMAL(8, 2),
+        allowNull: true,
+        comment: 'مساحة المسجد'
+    },
+    nearest_mosque: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'أقرب مسجد'
+    },
+    population_density: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+        comment: 'الكثافة السكانية'
+    },
+    within_urban_boundary: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        comment: 'داخل الحيز العمراني أم لا'
+    },
+    needs_maintenance: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        comment: 'يحتاج صيانة'
+    },
+    needs_renovation: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        comment: 'يحتاج إحلال وتجديد'
+    },
+    technical_committee_notes: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'ملاحظات اللجنة الفنية'
+    }
+}, {
+    tableName: 'closed_mosques',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+});
 
-// const getUsers = async () => {
-//   const result = await pool.query('SELECT * FROM users');
-//   return result.rows;
-// };
-
-// const updateUser = async (id, name, email) => {
-//   const result = await pool.query('UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *', [name, email, id]);
-//   return result.rows[0];
-// };
-
-// const deleteUser = async (id) => {
-//   await pool.query('DELETE FROM users WHERE id = $1', [id]);
-// };
-
-
-// CRUD for closed_mosques table
-const createClosedMosque = async (mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes) => {
-  const result = await pool.query(
-    `INSERT INTO closed_mosques (mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
-    [mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes]
-  );
-  return result.rows[0];
+// CRUD Operations
+const createClosedMosque = async (mosque_name_ar, directorate, mosque_address, closure_date,
+    closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary,
+    needs_maintenance, needs_renovation, technical_committee_notes) => {
+    return await ClosedMosque.create({
+        mosque_name_ar,
+        directorate,
+        mosque_address,
+        closure_date,
+        closure_reason,
+        mosque_area,
+        nearest_mosque,
+        population_density,
+        within_urban_boundary,
+        needs_maintenance,
+        needs_renovation,
+        technical_committee_notes
+    });
 };
 
 const getClosedMosques = async () => {
-  const result = await pool.query('SELECT * FROM closed_mosques');
-  return result.rows;
+    return await ClosedMosque.findAll();
 };
 
-const updateClosedMosque = async (id, mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes) => {
-  const result = await pool.query(
-    `UPDATE closed_mosques SET mosque_name_ar = $1, directorate = $2, mosque_address = $3, closure_date = $4, closure_reason = $5, mosque_area = $6, nearest_mosque = $7, population_density = $8, within_urban_boundary = $9, needs_maintenance = $10, needs_renovation = $11, technical_committee_notes = $12 WHERE mosque_id = $13 RETURNING *`,
-    [mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, mosque_area, nearest_mosque, population_density, within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes, id]
-  );
-  return result.rows[0];
+const updateClosedMosque = async (mosque_id, mosque_name_ar, directorate, mosque_address,
+    closure_date, closure_reason, mosque_area, nearest_mosque, population_density,
+    within_urban_boundary, needs_maintenance, needs_renovation, technical_committee_notes) => {
+    const mosque = await ClosedMosque.findByPk(mosque_id);
+    if (!mosque) {
+        throw new Error('Closed mosque not found');
+    }
+    return await mosque.update({
+        mosque_name_ar,
+        directorate,
+        mosque_address,
+        closure_date,
+        closure_reason,
+        mosque_area,
+        nearest_mosque,
+        population_density,
+        within_urban_boundary,
+        needs_maintenance,
+        needs_renovation,
+        technical_committee_notes
+    });
 };
 
-const deleteClosedMosque = async (id) => {
-  await pool.query('DELETE FROM closed_mosques WHERE mosque_id = $1', [id]);
+const deleteClosedMosque = async (mosque_id) => {
+    const mosque = await ClosedMosque.findByPk(mosque_id);
+    if (!mosque) {
+        throw new Error('Closed mosque not found');
+    }
+    await mosque.destroy();
 };
 
 module.exports = {
-  // createUser,
-  // getUsers,
-  // updateUser,
-  // deleteUser,
-  // getOpening,
-  createClosedMosque,
-  getClosedMosques,
-  updateClosedMosque,
-  deleteClosedMosque,
+    ClosedMosque,
+    createClosedMosque,
+    getClosedMosques,
+    updateClosedMosque,
+    deleteClosedMosque
 };

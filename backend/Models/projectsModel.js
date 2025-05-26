@@ -1,38 +1,134 @@
-const pool = require('../database_settings/db');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database_settings/db');
 
+const Project = sequelize.define('Project', {
+    project_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    project_name_ar: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        comment: 'اسم المشروع'
+    },
+    project_name_en: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Project Name in English'
+    },
+    project_value: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: true,
+        comment: 'قيمة العملية (التعاقد)'
+    },
+    expended: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: true,
+        comment: 'المنصرف'
+    },
+    current_implementation_rate: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: true,
+        comment: 'نسبة التنفيذ الحالية'
+    },
+    remaining_contract_amount: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: true,
+        comment: 'المتبقي من العقد'
+    },
+    execution_start_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: 'بداية التنفيذ'
+    },
+    expected_completion_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: 'التاريخ النهائي المتوقع'
+    },
+    project_image_path: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+        comment: 'صور المشروع'
+    },
+    gps_coordinates: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'التوقيع المكاني'
+    },
+    funding_source: {
+        type: DataTypes.STRING(20),
+        allowNull: true,
+        comment: 'التمويل الذاتي/الاستثماري',
+        validate: {
+            isIn: [['self_funded', 'investment_funded']]
+        }
+    }
+}, {
+    tableName: 'projects',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+});
 
-
-// Projects Table CRUD
-const createProject = async (project_name_ar, project_name_en, project_value, expended, current_implementation_rate, remaining_contract_amount, execution_start_date, expected_completion_date, project_image_path, gps_coordinates, funding_source) => {
-  const result = await pool.query(
-    `INSERT INTO projects (project_name_ar, project_name_en, project_value, expended, current_implementation_rate, remaining_contract_amount, execution_start_date, expected_completion_date, project_image_path, gps_coordinates, funding_source)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
-    [project_name_ar, project_name_en, project_value, expended, current_implementation_rate, remaining_contract_amount, execution_start_date, expected_completion_date, project_image_path, gps_coordinates, funding_source]
-  );
-  return result.rows[0];
+// CRUD Operations
+const createProject = async (project_name_ar, project_name_en, project_value, expended, 
+    current_implementation_rate, remaining_contract_amount, execution_start_date, 
+    expected_completion_date, project_image_path, gps_coordinates, funding_source) => {
+    return await Project.create({
+        project_name_ar,
+        project_name_en,
+        project_value,
+        expended,
+        current_implementation_rate,
+        remaining_contract_amount,
+        execution_start_date,
+        expected_completion_date,
+        project_image_path,
+        gps_coordinates,
+        funding_source
+    });
 };
 
 const getProjects = async () => {
-  const result = await pool.query('SELECT * FROM projects');
-  return result.rows;
+    return await Project.findAll();
 };
 
-const updateProject = async (id, project_name_ar, project_name_en, project_value, expended, current_implementation_rate, remaining_contract_amount, execution_start_date, expected_completion_date, project_image_path, gps_coordinates, funding_source) => {
-  const result = await pool.query(
-    `UPDATE projects SET project_name_ar = $1, project_name_en = $2, project_value = $3, expended = $4, current_implementation_rate = $5, remaining_contract_amount = $6, execution_start_date = $7, expected_completion_date = $8, project_image_path = $9, gps_coordinates = $10, funding_source = $11 WHERE project_id = $12 RETURNING *`,
-    [project_name_ar, project_name_en, project_value, expended, current_implementation_rate, remaining_contract_amount, execution_start_date, expected_completion_date, project_image_path, gps_coordinates, funding_source, id]
-  );
-  return result.rows[0];
+const updateProject = async (project_id, project_name_ar, project_name_en, project_value, expended,
+    current_implementation_rate, remaining_contract_amount, execution_start_date,
+    expected_completion_date, project_image_path, gps_coordinates, funding_source) => {
+    const project = await Project.findByPk(project_id);
+    if (!project) {
+        throw new Error('Project not found');
+    }
+    return await project.update({
+        project_name_ar,
+        project_name_en,
+        project_value,
+        expended,
+        current_implementation_rate,
+        remaining_contract_amount,
+        execution_start_date,
+        expected_completion_date,
+        project_image_path,
+        gps_coordinates,
+        funding_source
+    });
 };
 
-const deleteProject = async (id) => {
-  await pool.query('DELETE FROM projects WHERE project_id = $1', [id]);
+const deleteProject = async (project_id) => {
+    const project = await Project.findByPk(project_id);
+    if (!project) {
+        throw new Error('Project not found');
+    }
+    await project.destroy();
 };
-
 
 module.exports = {
-  createProject,
-  getProjects,
-  updateProject,
-  deleteProject,
+    Project,
+    createProject,
+    getProjects,
+    updateProject,
+    deleteProject
 };

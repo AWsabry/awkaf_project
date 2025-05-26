@@ -1,35 +1,123 @@
-const pool = require('../database_settings/db');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database_settings/db');
 
-// CRUD for blocked_projects table
-const createBlockedProject = async (mosque_name_ar, directorate, mosqueAddress, contractDate, delayReasons, contractorName, actionsTaken, latestUpdate, resolutionStatus) => {
-  const result = await pool.query(
-    `INSERT INTO blocked_projects (mosque_name_ar, directorate, mosque_address, contract_date, delay_reasons, contractor_name, actions_taken, latest_update, resolution_status)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-    [mosque_name_ar, directorate, mosqueAddress, contractDate, delayReasons, contractorName, actionsTaken, latestUpdate, resolutionStatus]
-  );
-  return result.rows[0];
+const BlockedProject = sequelize.define('BlockedProject', {
+    delayed_project_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    mosque_name_ar: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'اسم المسجد'
+    },
+    directorate: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        comment: 'المديرية'
+    },
+    mosque_address: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'عنوان المسجد'
+    },
+    contract_date: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: 'تاريخ التعاقد'
+    },
+    delay_reasons: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'أسباب التعثر'
+    },
+    contractor_name: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'اسم المقاول',
+        references: {
+            model: 'constructors',
+            key: 'contractor_name'
+        }
+    },
+    actions_taken: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'الخطوات التي تم اتخاذها'
+    },
+    latest_update: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'آخر تحديث'
+    },
+    resolution_status: {
+        type: DataTypes.STRING(20),
+        allowNull: true,
+        defaultValue: 'pending',
+        comment: 'حالة الحل',
+        validate: {
+            isIn: [['pending', 'in_progress', 'resolved']]
+        }
+    }
+}, {
+    tableName: 'blocked_projects',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+});
+
+// CRUD Operations
+const createBlockedProject = async (mosque_name_ar, directorate, mosque_address, contract_date,
+    delay_reasons, contractor_name, actions_taken, latest_update, resolution_status) => {
+    return await BlockedProject.create({
+        mosque_name_ar,
+        directorate,
+        mosque_address,
+        contract_date,
+        delay_reasons,
+        contractor_name,
+        actions_taken,
+        latest_update,
+        resolution_status
+    });
 };
 
 const getBlockedProjects = async () => {
-  const result = await pool.query('SELECT * FROM blocked_projects');
-  return result.rows;
+    return await BlockedProject.findAll();
 };
 
-const updateBlockedProject = async (id, mosqueNameAr, directorate, mosqueAddress, contractDate, delayReasons, contractorName, actionsTaken, latestUpdate, resolutionStatus) => {
-  const result = await pool.query(
-    `UPDATE blocked_projects SET mosque_name_ar = $1, directorate = $2, mosque_address = $3, contract_date = $4, delay_reasons = $5, contractor_name = $6, actions_taken = $7, latest_update = $8, resolution_status = $9 WHERE delayed_project_id = $10 RETURNING *`,
-    [mosqueNameAr, directorate, mosqueAddress, contractDate, delayReasons, contractorName, actionsTaken, latestUpdate, resolutionStatus, id]
-  );
-  return result.rows[0];
+const updateBlockedProject = async (delayed_project_id, mosque_name_ar, directorate, mosque_address,
+    contract_date, delay_reasons, contractor_name, actions_taken, latest_update, resolution_status) => {
+    const project = await BlockedProject.findByPk(delayed_project_id);
+    if (!project) {
+        throw new Error('Blocked project not found');
+    }
+    return await project.update({
+        mosque_name_ar,
+        directorate,
+        mosque_address,
+        contract_date,
+        delay_reasons,
+        contractor_name,
+        actions_taken,
+        latest_update,
+        resolution_status
+    });
 };
 
-const deleteBlockedProject = async (id) => {
-  await pool.query('DELETE FROM blocked_projects WHERE delayed_project_id = $1', [id]);
+const deleteBlockedProject = async (delayed_project_id) => {
+    const project = await BlockedProject.findByPk(delayed_project_id);
+    if (!project) {
+        throw new Error('Blocked project not found');
+    }
+    await project.destroy();
 };
 
 module.exports = {
-  createBlockedProject,
-  getBlockedProjects,
-  updateBlockedProject,
-  deleteBlockedProject,
+    BlockedProject,
+    createBlockedProject,
+    getBlockedProjects,
+    updateBlockedProject,
+    deleteBlockedProject
 };

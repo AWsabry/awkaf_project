@@ -1,35 +1,70 @@
-const pool = require('../database_settings/db');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database_settings/db');
 
-// Constructors Table CRUD
+const Constructor = sequelize.define('Constructor', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    contractor_name: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
+    },
+    national_id: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true
+    },
+    contact_info: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    }
+}, {
+    tableName: 'constructors',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false
+});
+
+// CRUD Operations
 const createConstructor = async (contractor_name, national_id, contact_info) => {
-  const result = await pool.query(
-    `INSERT INTO constructors (contractor_name, national_id, contact_info)
-     VALUES ($1, $2, $3) RETURNING *`,
-    [contractor_name, national_id, contact_info]
-  );
-  return result.rows[0];
+    return await Constructor.create({
+        contractor_name,
+        national_id,
+        contact_info
+    });
 };
 
 const getConstructors = async () => {
-  const result = await pool.query('SELECT * FROM constructors');
-  return result.rows;
+    return await Constructor.findAll();
 };
 
 const updateConstructor = async (id, contractor_name, national_id, contact_info) => {
-  const result = await pool.query(
-    `UPDATE constructors SET contractor_name = $1, national_id = $2, contact_info = $3 WHERE id = $4 RETURNING *`,
-    [contractor_name, national_id, contact_info, id]
-  );
-  return result.rows[0];
+    const constructor = await Constructor.findByPk(id);
+    if (!constructor) {
+        throw new Error('Constructor not found');
+    }
+    return await constructor.update({
+        contractor_name,
+        national_id,
+        contact_info
+    });
 };
 
 const deleteConstructor = async (id) => {
-  await pool.query('DELETE FROM constructors WHERE id = $1', [id]);
+    const constructor = await Constructor.findByPk(id);
+    if (!constructor) {
+        throw new Error('Constructor not found');
+    }
+    await constructor.destroy();
 };
 
 module.exports = {
-  createConstructor,
-  getConstructors,
-  updateConstructor,
-  deleteConstructor,
+    Constructor,
+    createConstructor,
+    getConstructors,
+    updateConstructor,
+    deleteConstructor
 };
