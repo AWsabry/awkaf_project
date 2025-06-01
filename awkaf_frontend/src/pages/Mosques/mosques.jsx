@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.rtl.min.css";
-import "../../styles/App.css";
+import "../../styles/custom.css";
 import { ar } from "../../translations/ar.ts";
 import { mosquesService } from "../../services/api";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaEdit } from 'react-icons/fa';
 
 export default function Mosques() {
   const [mosques, setMosques] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(3);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
@@ -157,6 +157,13 @@ export default function Mosques() {
                       </td>
                       <td>
                         <div className="btn-group">
+                          <Link
+                            to={`/edit-mosque/${mosque.mosque_id}`}
+                            className="btn btn-sm btn-outline-primary me-1"
+                            title="تعديل"
+                          >
+                            <FaEdit />
+                          </Link>
                           <button 
                             className="btn btn-sm btn-outline-danger"
                             onClick={() => handleDelete(mosque.mosque_id)}

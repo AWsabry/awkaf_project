@@ -11,6 +11,9 @@ import Users from "./pages/Users/users";
 import AddUser from "./pages/Users/add_user";
 import ProtectedRoute from './components/ProtectedRoute';
 import ProjectNavBar from "./components/projectNavBar";
+import PageTransition from './components/PageTransition';
+import "bootstrap/dist/css/bootstrap.rtl.min.css";
+import "./styles/custom.css";
 
 function App() {
   return (
@@ -23,16 +26,18 @@ function App() {
         <Route path="/*" element={
           <ProtectedRoute>
             <ProjectNavBar />
-            <Routes>
-              <Route path="projects" element={<Projects />} />
-              <Route path="add-project" element={<AddProject />} />
-              <Route path="mosques" element={<Mosques />} />
-              <Route path="add-mosque" element={<AddMosque />} />
-              <Route path="blocked-projects" element={<BlockedProjects />} />
-              <Route path="add-blocked-project" element={<AddBlockedProject />} />
-              <Route path="users" element={<Users />} />
-              <Route path="add-user" element={<AddUser />} />
-            </Routes>
+            <PageTransition>
+              <Routes>
+                <Route path="projects" element={<Projects />} />
+                <Route path="add-project" element={<AddProject />} />
+                <Route path="mosques" element={<Mosques />} />
+                <Route path="add-mosque" element={<AddMosque />} />
+                <Route path="blocked-projects" element={<BlockedProjects />} />
+                <Route path="add-blocked-project" element={<AddBlockedProject />} />
+                <Route path="users" element={<Users />} />
+                <Route path="add-user" element={<AddUser />} />
+              </Routes>
+            </PageTransition>
           </ProtectedRoute>
         } />
 

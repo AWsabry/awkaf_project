@@ -3,7 +3,7 @@ import { authService } from "../services/api";
 import { useState } from "react";
 import { ar } from "../translations/ar.ts";
 import { FaSignOutAlt } from "react-icons/fa";
-import "./projectNavBar.css";
+import "../styles/projectNavBar.css";
 
 export default function ProjectNavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

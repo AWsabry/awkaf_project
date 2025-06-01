@@ -12,6 +12,8 @@ export interface Translations {
     password: string;
     submit: string;
     welcome: string;
+    emailPlaceholder: string;
+    passwordPlaceholder: string;
   };
   projects: {
     title: string;
@@ -82,7 +84,9 @@ export const ar: Translations = {
     username: "اسم المستخدم",
     password: "كلمة المرور",
     submit: "دخول",
-    welcome: "مرحباً بك في نظام المشاريع"
+    welcome: "مرحباً بك في نظام المشاريع",
+    emailPlaceholder: "البريد الإلكتروني",
+    passwordPlaceholder: "كلمة المرور"
   },
   projects: {
     title: "المشروعات",

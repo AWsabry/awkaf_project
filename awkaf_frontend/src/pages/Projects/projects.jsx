@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.rtl.min.css";
-import "../../styles/App.css";
+import "../../styles/custom.css";
 import { ar } from "../../translations/ar.ts";
 import { projectsService } from "../../services/api";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaEdit } from 'react-icons/fa';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(3);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
@@ -51,15 +51,15 @@ const Projects = () => {
 
   const formatCurrency = (amount) => {
     try {
-      if (!amount) return '0.00 ر.س';
-      return new Intl.NumberFormat('ar-SA', {
+      if (!amount) return '0.00 جنيه';
+      return new Intl.NumberFormat('ar-EGP', {
         style: 'currency',
-        currency: 'SAR',
+        currency: 'EGP',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(amount);
     } catch (error) {
-      return '0.00 ر.س';
+      return '0.00 جنيه';
     }
   };
 
@@ -165,6 +165,13 @@ const Projects = () => {
                       </td>
                       <td>
                         <div className="btn-group">
+                          <Link
+                            to={`/edit-project/${project.project_id}`}
+                            className="btn btn-sm btn-outline-primary me-1"
+                            title="تعديل"
+                          >
+                            <FaEdit />
+                          </Link>
                           <button 
                             className="btn btn-sm btn-outline-danger"
                             onClick={() => handleDelete(project.project_id)}

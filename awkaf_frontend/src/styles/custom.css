@@ -1,0 +1,241 @@
+/* Import Arabic fonts */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap');
+
+/* Premium color palette */
+:root {
+  --gold-primary: #d4af37;
+  --gold-hover: #c6a24b;
+  --gold-light: #f4e4bc;
+  --dark-bg: #1a1a1a;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+}
+
+/* Global styles */
+body {
+  font-family: 'Tajawal', 'Amiri', sans-serif;
+  color: var(--text-primary);
+  background-color: #f8f9fa;
+}
+
+/* Page transition animations */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in, transform 300ms ease-out;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms ease-in, transform 300ms ease-out;
+}
+
+/* Card styles */
+.card {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 1rem;
+  animation: cardFadeIn 0.5s ease-out;
+}
+
+.card-header {
+  background-color: white;
+  border-bottom: 2px solid var(--gold-primary);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 1rem 1.5rem;
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Table styles */
+.table {
+  font-family: 'Tajawal', sans-serif;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.table-gold {
+  border-color: var(--border-color);
+}
+
+.table-gold thead th {
+  background-color: var(--gold-light);
+  color: var(--text-primary);
+  font-weight: 700;
+  border-bottom: 2px solid var(--gold-primary);
+  padding: 1rem;
+}
+
+.table-gold tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.font-medium {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Button styles */
+.btn-gold {
+  background-color: var(--gold-primary);
+  color: white;
+  border: none;
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: var(--gold-hover);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form styles */
+.form-control, .form-select {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-family: 'Tajawal', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Badge styles */
+.badge {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+/* Pagination styles */
+.pagination .page-link {
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--gold-primary);
+  border-color: var(--gold-primary);
+  color: white;
+}
+
+.pagination .page-link:hover {
+  background-color: var(--gold-light);
+  color: var(--text-primary);
+}
+
+/* Loading spinner */
+.spinner-border.text-gold {
+  color: var(--gold-primary) !important;
+}
+
+/* Alert styles */
+.alert {
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: none;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.alert-danger {
+  background-color: #fff5f5;
+  color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-header {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .table-gold thead th,
+  .table-gold tbody td {
+    padding: 0.75rem;
+  }
+} 

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ar } from "../../translations/ar.ts";
 import { authService } from "../../services/api";
+import logoAwkaf from '../../assets/logo_awkaf.jpg'; // Import the logo image
 
 export default function Login() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function Login() {
       [name]: value
     }));
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,9 +60,21 @@ export default function Login() {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6 col-lg-4">
-            <div className="card">
+            <div className="card shadow-lg border-0 rounded-lg">
               <div className="card-header text-center">
-                <h4>{ar.auth.login}</h4>
+                {/* Add the logo here */}
+                <img
+                  src={logoAwkaf}
+                  alt="Awkaf Logo"
+                  className="rounded-circle mb-3"
+                  style={{
+                    width: '100px', // Adjust size as needed
+                    height: '100px', // Adjust size as needed
+                    objectFit: 'cover',
+                    border: '3px solid #d4af37' // Gold border
+                  }}
+                />
+                <h3 className="text-center font-weight-light my-4">{ar.auth.login}</h3>
               </div>
               <div className="card-body">
                 {error && (
@@ -70,10 +84,12 @@ export default function Login() {
                 )}
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label className="form-label">البريد الإلكتروني</label>
+                    <label htmlFor="inputEmail" className="form-label">{ar.auth.email}</label>
                     <input
-                      type="email"
                       className="form-control"
+                      id="inputEmail"
+                      type="email"
+                      placeholder={ar.auth.emailPlaceholder}
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
@@ -81,27 +97,23 @@ export default function Login() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label">كلمة المرور</label>
+                    <label htmlFor="inputPassword" className="form-label">{ar.auth.password}</label>
                     <input
-                      type="password"
                       className="form-control"
+                      id="inputPassword"
+                      type="password"
+                      placeholder={ar.auth.passwordPlaceholder}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       required
                     />
                   </div>
-                  <div className="d-grid">
+                  <div className="d-flex align-items-center justify-content-between mt-4 mb-0">
+                    {/* <Link className="small" to="#!">Forgot Password?</Link> */}
                     <button
+                      className="btn btn-gold w-100"
                       type="submit"
-                      className="btn"
-                      style={{
-                        backgroundColor: '#d4af37',
-                        color: 'white',
-                        border: 'none',
-                      }}
-                      onMouseOver={e => (e.currentTarget.style.backgroundColor = '#c6a24b')}
-                      onMouseOut={e => (e.currentTarget.style.backgroundColor = '#d4af37')}
                       disabled={loading}
                     >
                       {loading ? (
