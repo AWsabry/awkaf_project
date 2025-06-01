@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { sequelize, configureStaticFiles } = require('./database_settings/db');
@@ -6,6 +7,7 @@ const blockedProjects = require('./Views/blockedProjectsView');
 const closedMosques = require('./Views/closedMosquesView');
 const projects = require('./Views/projectView');
 const constructors = require('./Views/constructorsView');
+const loginRoutes = require('./Views/loginView'); // Correct import for loginView.js
 
 const app = express();
 
@@ -44,6 +46,7 @@ app.use('/api', blockedProjects);
 app.use('/api', closedMosques);
 app.use('/api', projects);
 app.use('/api', constructors);
+app.use('/api', loginRoutes); // Use the router object directly
 
 // Error handling middleware
 app.use((err, req, res, next) => {

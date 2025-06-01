@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ar } from "../../translations/ar.ts";
 import { projectsService } from "../../services/api";
 
-export default function AddProjects() {
+export default function AddProject() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     project_name_ar: '',
@@ -16,7 +16,7 @@ export default function AddProjects() {
     expected_completion_date: '',
     project_image_path: '',
     gps_coordinates: '',
-    funding_source: 'self_funded'
+    funding_source: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,16 +35,16 @@ export default function AddProjects() {
     setError(null);
 
     try {
-      // Convert numeric strings to numbers
-      const processedData = {
+      // Convert numeric fields to numbers
+      const submissionData = {
         ...formData,
         project_value: parseFloat(formData.project_value),
         expended: parseFloat(formData.expended),
         current_implementation_rate: parseFloat(formData.current_implementation_rate),
         remaining_contract_amount: parseFloat(formData.remaining_contract_amount)
       };
-
-      await projectsService.createProject(processedData);
+      
+      await projectsService.createProject(submissionData);
       navigate('/projects');
     } catch (err) {
       setError('حدث خطأ أثناء إضافة المشروع. يرجى المحاولة مرة أخرى.');
@@ -56,7 +56,6 @@ export default function AddProjects() {
 
   return (
     <div dir="rtl" lang="ar">
-      {/* Project Form */}
       <div className="container">
         <div className="card">
           <div className="card-header">
@@ -82,7 +81,7 @@ export default function AddProjects() {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label">Project Name (English)</label>
+                  <label className="form-label">اسم المشروع (إنجليزي)</label>
                   <input
                     type="text"
                     className="form-control"
@@ -105,7 +104,7 @@ export default function AddProjects() {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label">المبلغ المصروف</label>
+                  <label className="form-label">المبلغ المنفق</label>
                   <input
                     type="number"
                     step="0.01"
@@ -129,7 +128,7 @@ export default function AddProjects() {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label">المبلغ المتبقي</label>
+                  <label className="form-label">المبلغ المتبقي من العقد</label>
                   <input
                     type="number"
                     step="0.01"
@@ -195,8 +194,8 @@ export default function AddProjects() {
                     required
                   >
                     <option value="self_funded">تمويل ذاتي</option>
-                    <option value="self_funded">تبرعات</option>
-                    <option value="self_funded">حكومي</option>
+                    <option value="donor_funded">تمويل مانح</option>
+                    <option value="government_funded">تمويل حكومي</option>
                   </select>
                 </div>
               </div>

@@ -6,7 +6,8 @@ const API_CONFIG = {
   // API Endpoints
   ENDPOINTS: {
     AUTH: {
-      LOGIN: "/api/auth",
+      LOGIN: "/api/login",
+      LOGOUT: "/api/logout",
     },
     PROJECTS: {
       LIST: "/api/projects",
@@ -28,6 +29,13 @@ const API_CONFIG = {
       UPDATE: (id) => `/api/blocked-projects/${id}`,
       DELETE: (id) => `/api/blocked-projects/${id}`,
       DETAILS: (id) => `/api/blocked-projects/${id}`,
+    },
+    USERS: {
+      LIST: "/api/users",
+      CREATE: "/api/users",
+      UPDATE: (id) => `/api/users/${id}`,
+      DELETE: (id) => `/api/users/${id}`,
+      DETAILS: (id) => `/api/users/${id}`,
     },
   },
 };

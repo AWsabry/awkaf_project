@@ -22,10 +22,9 @@ export default function Mosques() {
     try {
       setLoading(true);
       const response = await mosquesService.getMosques();
-      console.log('API Response:', response);
       
-      if (Array.isArray(response)) {
-        setMosques(response);
+      if (Array.isArray(response.data)) {
+        setMosques(response.data);
         setError(null);
       } else {
         console.error('Invalid response format:', response);
@@ -44,7 +43,7 @@ export default function Mosques() {
   const formatDate = (dateString) => {
     try {
       if (!dateString) return 'N/A';
-      return new Date(dateString).toLocaleDateString('ar-SA');
+      return new Date(dateString).toLocaleDateString('ar-EG');
     } catch (error) {
       return 'Invalid Date';
     }
@@ -52,7 +51,7 @@ export default function Mosques() {
 
   const formatArea = (area) => {
     try {
-      if (!area) return '0.00';
+      if (!area) return '0.00 م²';
       return `${parseFloat(area).toFixed(2)} م²`;
     } catch (error) {
       return '0.00 م²';
@@ -133,7 +132,9 @@ export default function Mosques() {
                 <tbody>
                   {currentItems.map((mosque) => (
                     <tr key={mosque.mosque_id}>
-                      <td>{mosque.mosque_name_ar}</td>
+                      <td>
+                        <div className="font-medium">{mosque.mosque_name_ar}</div>
+                      </td>
                       <td>{mosque.directorate}</td>
                       <td>{mosque.mosque_address}</td>
                       <td>{formatDate(mosque.closure_date)}</td>

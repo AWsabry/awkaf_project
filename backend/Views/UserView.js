@@ -4,72 +4,31 @@ const router = express.Router();
 const { STATIC_STRINGS } = require('../static/constants.ts');
 const User = require('../Models/UserModel');
 const auth = require('../middleware/auth');
+const { Op } = require('sequelize'); // Import Op from sequelize
 
 router.use(bodyParser.json());
 
 // Create a new user (Admin only)
-router.post('/users', auth, async (req, res) => {
+router.post('/users', async (req, res) => {
     try {
-        // Check if user is admin
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Access denied. Admin privileges required.'
-            });
-        }
-
-        const { username, email, password, role } = req.body;
-        
-        // Check if user already exists
-        const existingUser = await User.findOne({
-            where: {
-                [sequelize.Op.or]: [{ username }, { email }]
-            }
-        });
-
-        if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: 'Username or email already exists'
-            });
-        }
-
-        const user = await User.create({
-            username,
-            email,
-            password,
-            role: role || 'user'
-        });
-
-        // Remove password from response
-        const userResponse = user.toJSON();
-        delete userResponse.password;
+        const userResponse = await User.createUser(req.body);
 
         res.status(201).json({
             success: true,
-            message: STATIC_STRINGS.OPERATIONS.SUCCESS,
+            message: STATIC_STRINGS.AUTH.USER_CREATED,
             data: userResponse
         });
     } catch (error) {
         res.status(400).json({
             success: false,
-            message: 'Error creating user',
-            error: error.message
+            message: error.message
         });
     }
 });
 
 // Get all users (Admin only)
-router.get('/users', auth, async (req, res) => {
+router.get('/users', async (req, res) => {
     try {
-        // Check if user is admin
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Access denied. Admin privileges required.'
-            });
-        }
-
         const users = await User.findAll({
             attributes: { exclude: ['password'] }
         });
@@ -148,11 +107,11 @@ router.put('/users/:id', auth, async (req, res) => {
         if (username || email) {
             const existingUser = await User.findOne({
                 where: {
-                    [sequelize.Op.or]: [
+                    [Op.or]: [
                         username ? { username } : {},
                         email ? { email } : {}
                     ],
-                    [sequelize.Op.not]: { id }
+                    [Op.not]: { id }
                 }
             });
 
@@ -191,16 +150,8 @@ router.put('/users/:id', auth, async (req, res) => {
 });
 
 // Delete user (Admin only)
-router.delete('/users/:id', auth, async (req, res) => {
+router.delete('/users/:id', async (req, res) => {
     try {
-        // Check if user is admin
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Access denied. Admin privileges required.'
-            });
-        }
-
         const { id } = req.params;
         const user = await User.findByPk(id);
 
@@ -227,4 +178,4 @@ router.delete('/users/:id', auth, async (req, res) => {
     }
 });
 
-module.exports = router; 
+module.exports = router;

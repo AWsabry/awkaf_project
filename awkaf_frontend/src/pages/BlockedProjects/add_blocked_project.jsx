@@ -33,12 +33,21 @@ export default function AddBlockedProject() {
     setError(null);
 
     try {
-      await blockedProjectsService.createBlockedProject(formData);
-      navigate('/blocked-projects');
+      // Convert empty contractor name to null before submission
+      const submissionData = {
+        ...formData,
+        contractor_name: formData.contractor_name.trim() === '' ? null : formData.contractor_name
+      };
+      
+      const response = await blockedProjectsService.createBlockedProject(submissionData);
+      if (response.success) {
+        navigate('/blocked-projects');
+      } else {
+        setError('فشل في إضافة المشروع المتعثر');
+      }
     } catch (err) {
-      setError('حدث خطأ أثناء إضافة المشروع المتعثر. يرجى المحاولة مرة أخرى.');
+      setError('حدث خطأ أثناء إضافة المشروع المتعثر');
       console.error('Error creating blocked project:', err);
-      console.log(formData)
     } finally {
       setLoading(false);
     }
@@ -104,13 +113,14 @@ export default function AddBlockedProject() {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label">اسم المقاول</label>
+                  <label className="form-label">اسم المقاول (اختياري)</label>
                   <input
                     type="text"
                     className="form-control"
                     name="contractor_name"
                     value={formData.contractor_name}
                     onChange={handleChange}
+                    placeholder="يمكن ترك هذا الحقل فارغاً"
                   />
                 </div>
                 <div className="col-md-12">

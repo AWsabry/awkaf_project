@@ -42,10 +42,14 @@ export default function AddMosque() {
         mosque_area: parseFloat(formData.mosque_area)
       };
 
-      await mosquesService.createMosque(processedData);
-      navigate('/mosques');
+      const response = await mosquesService.createMosque(processedData);
+      if (response.success) {
+        navigate('/mosques');
+      } else {
+        setError('فشل في إضافة المسجد');
+      }
     } catch (err) {
-      setError('حدث خطأ أثناء إضافة المسجد. يرجى المحاولة مرة أخرى.');
+      setError('حدث خطأ أثناء إضافة المسجد');
       console.error('Error creating mosque:', err);
     } finally {
       setLoading(false);

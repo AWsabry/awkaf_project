@@ -22,10 +22,9 @@ const Projects = () => {
     try {
       setLoading(true);
       const response = await projectsService.getProjects();
-      console.log('API Response:', response);
       
-      if (Array.isArray(response)) {
-        setProjects(response);
+      if (Array.isArray(response.data)) {
+        setProjects(response.data);
         setError(null);
       } else {
         console.error('Invalid response format:', response);
@@ -44,7 +43,7 @@ const Projects = () => {
   const formatDate = (dateString) => {
     try {
       if (!dateString) return 'N/A';
-      return new Date(dateString).toLocaleDateString('ar-SA');
+      return new Date(dateString).toLocaleDateString('ar-EG');
     } catch (error) {
       return 'Invalid Date';
     }
@@ -158,7 +157,12 @@ const Projects = () => {
                       <td>{formatCurrency(project.remaining_contract_amount)}</td>
                       <td>{formatDate(project.execution_start_date)}</td>
                       <td>{formatDate(project.expected_completion_date)}</td>
-                      <td>{project.funding_source === 'self_funded' ? 'تمويل ذاتي' : project.funding_source}</td>
+                      <td>
+                        {project.funding_source === 'self_funded' && 'تمويل ذاتي'}
+                        {project.funding_source === 'donor_funded' && 'تمويل مانح'}
+                        {project.funding_source === 'government_funded' && 'تمويل حكومي'}
+                        {!['self_funded', 'donor_funded', 'government_funded'].includes(project.funding_source) && project.funding_source}
+                      </td>
                       <td>
                         <div className="btn-group">
                           <button 

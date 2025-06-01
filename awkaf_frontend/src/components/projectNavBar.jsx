@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../services/api";
 import { useState } from "react";
 import { ar } from "../translations/ar.ts";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -6,12 +7,29 @@ import "./projectNavBar.css";
 
 export default function ProjectNavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      console.log("logout");
+      await authService.logout();
+      // Clear user data from localStorage
+      localStorage.removeItem('user');
+      // Redirect to login page
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if the API call fails, we should still log the user out locally
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
+  };
 
   return (
     <nav className="navbar navbar-expand-lg mb-4">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
-          <FaSignOutAlt /> {ar.navigation.logout}
+        <Link className="navbar-brand" to="/projects">
+          {ar.navigation.title}
         </Link>
         
         {/* Hamburger menu button */}
@@ -26,9 +44,14 @@ export default function ProjectNavBar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div dir="rtl" lang="ar">
+        <div dir="rtl" lang="ar" className="d-flex justify-content-between w-100">
           <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+                <Link className="nav-link" to="/users" onClick={() => setIsMenuOpen(false)}>
+                  المستخدمين
+                </Link>
+              </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/projects" onClick={() => setIsMenuOpen(false)}>
                   {ar.navigation.projects}
@@ -44,8 +67,15 @@ export default function ProjectNavBar() {
                   {ar.navigation.blockedProjects}
                 </Link>
               </li>
+         
             </ul>
           </div>
+          <button 
+            className="btn btn-outline-danger ms-2"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt /> {ar.navigation.logout}
+          </button>
         </div>
       </div>
     </nav>

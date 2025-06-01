@@ -22,10 +22,9 @@ export default function BlockedProjects() {
     try {
       setLoading(true);
       const response = await blockedProjectsService.getBlockedProjects();
-      console.log('API Response:', response);
       
-      if (Array.isArray(response)) {
-        setBlockedProjects(response);
+      if (Array.isArray(response.data)) {
+        setBlockedProjects(response.data);
         setError(null);
       } else {
         console.error('Invalid response format:', response);
@@ -44,7 +43,7 @@ export default function BlockedProjects() {
   const formatDate = (dateString) => {
     try {
       if (!dateString) return 'N/A';
-      return new Date(dateString).toLocaleDateString('ar-SA');
+      return new Date(dateString).toLocaleDateString('ar-EG');
     } catch (error) {
       return 'Invalid Date';
     }
@@ -137,7 +136,9 @@ export default function BlockedProjects() {
                 <tbody>
                   {currentItems.map((project) => (
                     <tr key={project.delayed_project_id}>
-                      <td>{project.mosque_name_ar}</td>
+                      <td>
+                        <div className="font-medium">{project.mosque_name_ar}</div>
+                      </td>
                       <td>{project.directorate}</td>
                       <td>{project.mosque_address}</td>
                       <td>{formatDate(project.contract_date)}</td>

@@ -18,6 +18,13 @@ export const authService = {
     const response = await api.post(API_CONFIG.ENDPOINTS.AUTH.LOGIN, credentials);
     return response.data;
   },
+  
+  logout: async () => {
+    console.log("logout");
+    const response = await api.post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
+    console.log(response.data);
+    return response.data;
+  }
 };
 
 // Projects Services
@@ -90,6 +97,26 @@ export const blockedProjectsService = {
     const response = await api.get(API_CONFIG.ENDPOINTS.BLOCKED_PROJECTS.DETAILS(id));
     return response.data;
   },
+};
+
+// Users Services
+export const usersService = {
+  getUsers: async () => {
+    const response = await api.get(API_CONFIG.ENDPOINTS.USERS.LIST);
+    return response.data;
+  },
+  createUser: async (userData) => {
+    const response = await api.post(API_CONFIG.ENDPOINTS.USERS.CREATE, userData);
+    return response.data;
+  },
+  updateUser: async (id, userData) => {
+    const response = await api.put(API_CONFIG.ENDPOINTS.USERS.UPDATE(id), userData);
+    return response.data;
+  },
+  deleteUser: async (id) => {
+    const response = await api.delete(API_CONFIG.ENDPOINTS.USERS.DELETE(id));
+    return response.data;
+  }
 };
 
 export default api; 

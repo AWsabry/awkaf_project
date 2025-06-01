@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const { sequelize } = require('../database_settings/db');
 
@@ -51,4 +51,21 @@ User.prototype.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = User; 
+User.createUser = async function ({ username, email, password, role = 'user' }) {
+    const existingUser = await this.findOne({
+        where: {
+            [Op.or]: [{ username }, { email }]
+        }
+    });
+
+    if (existingUser) {
+        throw new Error('Username or email already exists');
+    }
+
+    const user = await this.create({ username, email, password, role });
+    const userResponse = user.toJSON();
+    delete userResponse.password;
+    return userResponse;
+};
+
+module.exports = User;
