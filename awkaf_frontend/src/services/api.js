@@ -49,6 +49,58 @@ export const projectsService = {
     const response = await api.get(API_CONFIG.ENDPOINTS.PROJECTS.DETAILS(id));
     return response.data;
   },
+  getProjectImages: async (projectId) => {
+    try {
+      const response = await api.get(`/gallery/${projectId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  uploadImage: async (formData) => {
+    try {
+      console.log('Uploading image with data:', {
+        project_id: formData.get('project_id'),
+        project_name: formData.get('project_name')
+      });
+      
+      const response = await api.post(API_CONFIG.ENDPOINTS.GALLERY.CREATE, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          console.log('Upload progress:', percentCompleted);
+        }
+      });
+      
+      console.log('Upload response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Upload error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      throw error;
+    }
+  },
+  addProjectImage: async (imageData) => {
+    try {
+      const response = await api.post('/api/gallery', imageData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteProjectImage: async (imageId) => {
+    try {
+      const response = await api.delete(`/api/gallery/${imageId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 };
 
 // Mosques Services

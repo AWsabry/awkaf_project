@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.rtl.min.css";
 import "../../styles/custom.css";
 import { ar } from "../../translations/ar.ts";
 import { projectsService, constructorsService } from "../../services/api";
-import { FaTrash, FaEdit, FaFilter } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaFilter, FaEye } from 'react-icons/fa';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -339,13 +339,20 @@ const Projects = () => {
                           <td>
                             <div className="btn-group">
                               <Link
+                                to={`/view-project/${project.project_id}`}
+                                className="btn btn-sm btn-outline-info me-1"
+                                title="عرض التفاصيل"
+                              >
+                                <FaEye />
+                              </Link>
+                              <Link
                                 to={`/edit-project/${project.project_id}`}
                                 className="btn btn-sm btn-outline-primary me-1"
                                 title="تعديل"
                               >
                                 <FaEdit />
                               </Link>
-                              <button 
+                              <button
                                 className="btn btn-sm btn-outline-danger"
                                 onClick={() => handleDelete(project.project_id)}
                                 disabled={deleteLoading}

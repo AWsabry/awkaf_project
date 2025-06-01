@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Auth/Login';
 import Projects from './pages/Projects/projects';
 import AddProject from './pages/Projects/add_projects';
+import ViewProject from './pages/Projects/view_project';
 import Mosques from "./pages/Mosques/mosques";  
 import AddMosque from "./pages/Mosques/add_mosques";
 import BlockedProjects from "./pages/BlockedProjects/blocked_projects";
@@ -17,6 +18,8 @@ import ProjectNavBar from "./components/projectNavBar";
 import PageTransition from './components/PageTransition';
 import "bootstrap/dist/css/bootstrap.rtl.min.css";
 import "./styles/custom.css";
+import Gallery from './pages/Gallery/gallery';
+import AddImage from './pages/Gallery/add_image';
 
 function App() {
   return (
@@ -34,6 +37,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="projects" element={<Projects />} />
                 <Route path="add-project" element={<AddProject />} />
+                <Route path="view-project/:id" element={<ViewProject />} />
                 <Route path="mosques" element={<Mosques />} />
                 <Route path="add-mosque" element={<AddMosque />} />
                 <Route path="blocked-projects" element={<BlockedProjects />} />
@@ -42,6 +46,8 @@ function App() {
                 <Route path="add-user" element={<AddUser />} />
                 <Route path="constructors" element={<Constructors />} />
                 <Route path="add-constructor" element={<AddConstructor />} />
+                <Route path="/gallery/:id" element={<Gallery />} />
+                <Route path="/gallery/:id/add" element={<AddImage />} />
               </Routes>
             </PageTransition>
           </ProtectedRoute>

@@ -55,6 +55,31 @@ router.get('/projects', async (req, res) => {
   }
 });
 
+router.get('/projects/:project_id', async (req, res) => {
+  try {
+    const { project_id } = req.params;
+    const project = await getProjects({ where: { project_id } });
+
+    if (!project || project.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: project[0]
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching project',
+      error: error.message
+    });
+  }
+});
+
 router.put('/projects/:project_id', async (req, res) => {
   try {
     const { project_id } = req.params;

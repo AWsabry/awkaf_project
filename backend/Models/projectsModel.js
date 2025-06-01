@@ -89,8 +89,8 @@ const createProject = async (project_name_ar, project_name_en, project_value, ex
     });
 };
 
-const getProjects = async () => {
-    return await Project.findAll();
+const getProjects = async (filter = {}) => {
+    return await Project.findAll(filter);
 };
 
 const updateProject = async (project_id, project_name_ar, project_name_en, project_value, expended,

@@ -44,6 +44,13 @@ const API_CONFIG = {
       DELETE: (id) => `/api/constructors/${id}`,
       DETAILS: (id) => `/api/constructors/${id}`,
     },
+    GALLERY: {
+      // LIST: "/api/gallery",
+      CREATE: "/api/gallery",
+      // UPDATE: (id) => `/api/gallery/${id}`,
+      // DELETE: (id) => `/api/gallery/${id}`,
+      // DETAILS: (id) => `/api/gallery/${id}`,
+    },  
   },
 };
 

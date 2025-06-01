@@ -7,7 +7,8 @@ const blockedProjects = require('./Views/blockedProjectsView');
 const closedMosques = require('./Views/closedMosquesView');
 const projects = require('./Views/projectView');
 const constructors = require('./Views/constructorsView');
-const loginRoutes = require('./Views/loginView'); // Correct import for loginView.js
+const loginRoutes = require('./Views/loginView'); 
+const galleryRoutes = require('./Views/galleryView'); // Import gallery routes
 
 const app = express();
 
@@ -40,13 +41,12 @@ app.use((req, res, next) => {
 
 // Registering routes
 app.use('/api', users);
-
-// Registering routes for different models
 app.use('/api', blockedProjects);
 app.use('/api', closedMosques);
 app.use('/api', projects);
 app.use('/api', constructors);
 app.use('/api', loginRoutes); // Use the router object directly
+app.use('/api', galleryRoutes); // Register gallery routes under /api
 
 // Error handling middleware
 app.use((err, req, res, next) => {
