@@ -61,9 +61,7 @@ const Project = sequelize.define('Project', {
         type: DataTypes.STRING(20),
         allowNull: true,
         comment: 'التمويل الذاتي/الاستثماري',
-        validate: {
-            isIn: [['self_funded', 'investment_funded']]
-        }
+
     }
 }, {
     tableName: 'projects',

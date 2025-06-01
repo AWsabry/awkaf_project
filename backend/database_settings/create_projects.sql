@@ -15,11 +15,6 @@ CREATE TABLE projects (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ENUM workaround in PostgreSQL
--- Add a CHECK constraint for funding_source
-ALTER TABLE projects
-ADD CONSTRAINT funding_source_check 
-CHECK (funding_source IN ('self_funded', 'investment_funded'));
 
 -- Now add comments
 COMMENT ON COLUMN projects.project_name_ar IS 'اسم المشروع';

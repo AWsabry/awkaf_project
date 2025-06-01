@@ -17,11 +17,11 @@ const API_CONFIG = {
       DETAILS: (id) => `/api/projects/${id}`,
     },
     MOSQUES: {
-      LIST: "/api/closed-mosques",
-      CREATE: "/api/closed-mosques",
-      UPDATE: (id) => `/api/closed-mosques/${id}`,
-      DELETE: (id) => `/api/closed-mosques/${id}`,
-      DETAILS: (id) => `/api/closed-mosques/${id}`,
+      LIST: "/api/mosques",
+      CREATE: "/api/mosques",
+      UPDATE: (id) => `/api/mosques/${id}`,
+      DELETE: (id) => `/api/mosques/${id}`,
+      DETAILS: (id) => `/api/mosques/${id}`,
     },
     BLOCKED_PROJECTS: {
       LIST: "/api/blocked-projects",

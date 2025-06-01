@@ -126,6 +126,7 @@ export const constructorsService = {
     return response.data;
   },
   createConstructor: async (constructorData) => {
+    console.log(constructorData);
     const response = await api.post(API_CONFIG.ENDPOINTS.CONSTRUCTORS.CREATE, constructorData);
     return response.data;
   },

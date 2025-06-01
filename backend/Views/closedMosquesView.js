@@ -13,7 +13,7 @@ const {
 } = require('../Models/closedMosquesModel');
 
 // Closed Mosques Routes
-router.post('/closed-mosques', async (req, res) => {
+router.post('/mosques', async (req, res) => {
   try {
     const { mosque_name_ar, directorate, mosque_address, closure_date, closure_reason, 
       mosque_area, nearest_mosque, population_density, within_urban_boundary, 
@@ -39,7 +39,7 @@ router.post('/closed-mosques', async (req, res) => {
   }
 });
 
-router.get('/closed-mosques', async (req, res) => {
+router.get('/mosques', async (req, res) => {
   try {
     const closedMosques = await getClosedMosques();
     res.json({
@@ -55,7 +55,7 @@ router.get('/closed-mosques', async (req, res) => {
   }
 });
 
-router.put('/closed-mosques/:mosque_id', async (req, res) => {
+router.put('/mosques/:mosque_id', async (req, res) => {
   try {
     const { mosque_id } = req.params;
     const { mosque_name_ar, directorate, mosque_address, closure_date, closure_reason,
@@ -83,7 +83,7 @@ router.put('/closed-mosques/:mosque_id', async (req, res) => {
   }
 });
 
-router.delete('/closed-mosques/:mosque_id', async (req, res) => {
+router.delete('/mosques/:mosque_id', async (req, res) => {
   try {
     const { mosque_id } = req.params;
     await deleteClosedMosque(mosque_id);

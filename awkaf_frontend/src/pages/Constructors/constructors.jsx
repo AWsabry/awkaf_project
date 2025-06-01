@@ -2,27 +2,72 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.rtl.min.css";
 import "../../styles/custom.css";
-import { constructorsService } from "../../services/api"; // Corrected service import
-import { FaTrash, FaEdit } from 'react-icons/fa'; // Import icons
+import { constructorsService } from "../../services/api";
+import { FaTrash, FaEdit, FaFilter } from 'react-icons/fa';
 
 export default function Constructors() {
-  const [contractors, setConstructors] = useState([]);
+  const [constructors, setConstructors] = useState([]);
+  const [filteredConstructors, setFilteredConstructors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // Added pagination state
-  const [itemsPerPage] = useState(3); // Set items per page to 3
-  const [deleteLoading, setDeleteLoading] = useState(false); // Added delete loading state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    sortBy: 'date', // 'date' or 'name'
+    sortOrder: 'desc', // 'asc' or 'desc'
+    searchTerm: ''
+  });
 
   useEffect(() => {
     fetchConstructors();
   }, []);
 
+  useEffect(() => {
+    applyFilters();
+  }, [constructors, filters]);
+
+  const applyFilters = () => {
+    let filtered = [...constructors];
+
+    // Apply search filter
+    if (filters.searchTerm) {
+      filtered = filtered.filter(constructor =>
+        constructor.contractor_name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        constructor.national_id.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+        constructor.contact_info.toLowerCase().includes(filters.searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      if (filters.sortBy === 'date') {
+        return filters.sortOrder === 'desc'
+          ? new Date(b.created_at) - new Date(a.created_at)
+          : new Date(a.created_at) - new Date(b.created_at);
+      } else {
+        return filters.sortOrder === 'desc'
+          ? b.contractor_name.localeCompare(a.contractor_name)
+          : a.contractor_name.localeCompare(b.contractor_name);
+      }
+    });
+
+    setFilteredConstructors(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const fetchConstructors = async () => {
     try {
       setLoading(true);
-      // Using the corrected service name
       const response = await constructorsService.getConstructors();
-
       if (response.success && Array.isArray(response.data)) {
         setConstructors(response.data);
         setError(null);
@@ -43,39 +88,41 @@ export default function Constructors() {
   const formatDate = (dateString) => {
     try {
       if (!dateString) return 'N/A';
-      return new Date(dateString).toLocaleDateString('ar-EG');
+      const date = new Date(dateString);
+      return date.toLocaleString('ar-EG', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
     } catch (error) {
+      console.error('Error formatting date:', error);
       return 'Invalid Date';
     }
   };
 
-  // Handle contractor deletion
-  const handleDelete = async (contractorId) => {
+  const handleDelete = async (constructorId) => {
     if (window.confirm('هل أنت متأكد من حذف هذا المقاول؟')) {
       try {
-        setDeleteLoading(true); // Start loading
-        const response = await constructorsService.deleteConstructor(contractorId); // Corrected service name
-        if(response.success) {
-           // Filter out the deleted contractor from the state
-          setConstructors(contractors.filter(contractor => contractor.id !== contractorId));
-          alert('تم حذف المقاول بنجاح'); // Show success message
-        } else {
-          alert('فشل في حذف المقاول'); // Show failure message
-        }
+        setDeleteLoading(true);
+        await constructorsService.deleteConstructor(constructorId);
+        setConstructors(constructors.filter(constructor => constructor.id !== constructorId));
+        alert('تم حذف المقاول بنجاح');
       } catch (err) {
-        console.error('Error deleting contractor:', err);
-        alert('حدث خطأ أثناء حذف المقاول'); // Show error message
+        console.error('Error deleting constructor:', err);
+        alert('حدث خطأ أثناء حذف المقاول');
       } finally {
-        setDeleteLoading(false); // Stop loading
+        setDeleteLoading(false);
       }
     }
   };
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = contractors.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(contractors.length / itemsPerPage);
+  const currentItems = filteredConstructors.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredConstructors.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -93,104 +140,152 @@ export default function Constructors() {
 
   return (
     <div dir="rtl" lang="ar">
-      <div className="container">
-        <div className="card">
-          <div className="card-header d-flex justify-content-between align-items-center">
-            <span>المقاولون</span>
-            <Link to="/add-constructor" className="btn btn-sm btn-gold">
-              إضافة مقاول جديد
-            </Link>
-          </div>
-          <div className="card-body">
-            {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
+      <div className="container-fluid">
+        <div className="row">
+          {/* Filter Sidebar */}
+          <div className="col-md-3">
+            <div className="card mb-3">
+              <div className="card-header d-flex align-items-center">
+                <FaFilter className="me-2" />
+                <span>تصفية وترتيب</span>
               </div>
-            )}
-            <div className="table-responsive">
-              <table className="table table-bordered table-gold">
-                <thead>
-                  <tr>
-                    <th>اسم المقاول</th>
-                    <th>الرقم القومي</th>
-                    <th>معلومات التواصل</th>
-                    <th>تاريخ الإنشاء</th>
-                    <th>الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentItems.map((constructor) => (
-                    <tr key={constructor.id}>
-                      <td>{constructor.constructor_name}</td>
-                      <td>{constructor.national_id}</td>
-                      <td>{constructor.contact_info}</td>
-                      <td>{formatDate(constructor.created_at)}</td>
-                      <td>
-                        <div className="btn-group">
-                          {/* Placeholder for Edit Button */}
-                           <Link
-                            to={`/edit-constructor/${constructor.id}`}
-                            className="btn btn-sm btn-outline-primary me-1"
-                            title="تعديل"
-                          >
-                             <FaEdit />
-                          </Link>
-                          {/* Delete Button */}
-                          <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(constructor.id)}
-                            disabled={deleteLoading}
-                          >
-                            {deleteLoading ? (
-                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            ) : (
-                              <FaTrash />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="card-body">
+                <div className="mb-3">
+                  <label className="form-label">بحث</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="searchTerm"
+                    value={filters.searchTerm}
+                    onChange={handleFilterChange}
+                    placeholder="ابحث عن اسم المقاول أو الرقم القومي..."
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">ترتيب حسب</label>
+                  <select
+                    className="form-select"
+                    name="sortBy"
+                    value={filters.sortBy}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="date">التاريخ</option>
+                    <option value="name">الاسم</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">ترتيب</label>
+                  <select
+                    className="form-select"
+                    name="sortOrder"
+                    value={filters.sortOrder}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="desc">تنازلي (الأحدث)</option>
+                    <option value="asc">تصاعدي (الأقدم)</option>
+                  </select>
+                </div>
+              </div>
             </div>
+          </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && ( // Conditionally render pagination
-              <nav aria-label="Page navigation" className="mt-4">
-                <ul className="pagination justify-content-center">
-                  <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      السابق
-                    </button>
-                  </li>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <li key={index + 1} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(index + 1)}
-                      >
-                        {index + 1}
-                      </button>
-                    </li>
-                  ))}
-                  <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      التالي
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            )}
+          {/* Main Content */}
+          <div className="col-md-9">
+            <div className="card">
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <span>المقاولون</span>
+                <Link to="/add-constructor" className="btn btn-sm btn-gold">
+                  إضافة مقاول جديد
+                </Link>
+              </div>
+              <div className="card-body">
+                {error && (
+                  <div className="alert alert-danger" role="alert">
+                    {error}
+                  </div>
+                )}
+                <div className="table-responsive">
+                  <table className="table table-bordered table-gold">
+                    <thead>
+                      <tr>
+                        <th>اسم المقاول</th>
+                        <th>الرقم القومي</th>
+                        <th>معلومات التواصل</th>
+                        <th>تاريخ الإنشاء</th>
+                        <th>الإجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentItems.map((constructor) => (
+                        <tr key={constructor.id}>
+                          <td>{constructor.contractor_name}</td>
+                          <td>{constructor.national_id}</td>
+                          <td>{constructor.contact_info}</td>
+                          <td>{formatDate(constructor.created_at)}</td>
+                          <td>
+                            <div className="btn-group">
+                              <Link
+                                to={`/edit-constructor/${constructor.id}`}
+                                className="btn btn-sm btn-outline-primary me-1"
+                                title="تعديل"
+                              >
+                                <FaEdit />
+                              </Link>
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() => handleDelete(constructor.id)}
+                                disabled={deleteLoading}
+                              >
+                                {deleteLoading ? (
+                                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                ) : (
+                                  <FaTrash />
+                                )}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
+                {totalPages > 1 && (
+                  <nav aria-label="Page navigation" className="mt-4">
+                    <ul className="pagination justify-content-center">
+                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                        >
+                          السابق
+                        </button>
+                      </li>
+                      {[...Array(totalPages)].map((_, index) => (
+                        <li key={index + 1} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => handlePageChange(index + 1)}
+                          >
+                            {index + 1}
+                          </button>
+                        </li>
+                      ))}
+                      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                        >
+                          التالي
+                        </button>
+                      </li>
+                    </ul>
+                  </nav>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

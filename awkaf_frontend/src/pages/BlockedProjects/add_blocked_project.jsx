@@ -11,7 +11,7 @@ export default function AddBlockedProject() {
     mosque_address: '',
     contract_date: '',
     delay_reasons: '',
-    contractor_id: '',
+    constructor_id: '',
     actions_taken: '',
     latest_update: '',
     resolution_status: 'in_progress'
@@ -62,11 +62,20 @@ export default function AddBlockedProject() {
 
     try {
       const submissionData = {
-        ...formData,
-        contractor_id: formData.contractor_id ? parseInt(formData.contractor_id, 10) : undefined
+        mosque_name_ar: formData.mosque_name_ar,
+        directorate: formData.directorate,
+        mosque_address: formData.mosque_address,
+        contract_date: formData.contract_date,
+        delay_reasons: formData.delay_reasons,
+        constructor_id: Number(formData.constructor_id),
+        actions_taken: formData.actions_taken,
+        latest_update: formData.latest_update,
+        resolution_status: formData.resolution_status
       };
 
+      console.log('Submitting data:', submissionData);
       const response = await blockedProjectsService.createBlockedProject(submissionData);
+      console.log('Response:', response);
       if (response.success) {
         navigate('/blocked-projects');
       } else {
@@ -140,7 +149,7 @@ export default function AddBlockedProject() {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label className="form-label">اسم المقاول (اختياري)</label>
+                  <label className="form-label">معرف المقاول (اختياري)</label>
                   {constructorsLoading ? (
                     <div>جاري تحميل المقاولين...</div>
                   ) : constructorsError ? (
@@ -148,14 +157,14 @@ export default function AddBlockedProject() {
                   ) : (
                     <select
                       className="form-select"
-                      name="contractor_id"
-                      value={formData.contractor_id}
+                      name="constructor_id"
+                      value={formData.constructor_id}
                       onChange={handleChange}
                     >
-                      <option value="">اختر مقاول (اختياري)</option>
+                      <option value="">اختر معرف المقاول (اختياري)</option>
                       {constructors.map(constructor => (
-                        <option key={constructor.constructor_id} value={constructor.constructor_id}>
-                          {constructor.contractor_name}
+                        <option key={constructor.id} value={constructor.id}>
+                          {constructor.id} - {constructor.contractor_name}
                         </option>
                       ))}
                     </select>

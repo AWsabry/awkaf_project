@@ -6,7 +6,7 @@ import { constructorsService } from "../../services/api"; // Corrected service i
 export default function AddConstructor() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    constructor_name: '',
+    contractor_name: '',
     national_id: '',
     contact_info: '',
   });
@@ -27,8 +27,11 @@ export default function AddConstructor() {
     setError(null);
 
     try {
+        
       // Using the corrected service name
-      const response = await constructorsService.createConstructor(formData); // Corrected service name
+      const response = await constructorsService.createConstructor(formData);
+      console.log(response)
+ // Corrected service name
       if (response.success) {
         navigate('/constructors');
       } else {
@@ -62,8 +65,8 @@ export default function AddConstructor() {
                   <input
                     type="text"
                     className="form-control"
-                    name="constructor_name"
-                    value={formData.constructor_name}
+                    name="contractor_name"
+                    value={formData.contractor_name}
                     onChange={handleChange}
                     required
                   />
