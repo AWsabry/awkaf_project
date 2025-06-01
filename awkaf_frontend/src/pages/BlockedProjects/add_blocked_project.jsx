@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ar } from "../../translations/ar.ts";
-import { blockedProjectsService } from "../../services/api";
+import { blockedProjectsService, constructorsService } from "../../services/api.js";
 
 export default function AddBlockedProject() {
   const navigate = useNavigate();
@@ -11,13 +11,41 @@ export default function AddBlockedProject() {
     mosque_address: '',
     contract_date: '',
     delay_reasons: '',
-    contractor_name: '',
+    contractor_id: '',
     actions_taken: '',
     latest_update: '',
     resolution_status: 'in_progress'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [constructors, setConstructors] = useState([]);
+  const [constructorsLoading, setConstructorsLoading] = useState(true);
+  const [constructorsError, setConstructorsError] = useState(null);
+
+  useEffect(() => {
+    fetchConstructors();
+  }, []);
+
+  const fetchConstructors = async () => {
+    try {
+      setConstructorsLoading(true);
+      const response = await constructorsService.getConstructors();
+      if (response.success && Array.isArray(response.data)) {
+        setConstructors(response.data);
+        setConstructorsError(null);
+      } else {
+        setConstructors([]);
+        setConstructorsError('Failed to fetch constructors.');
+        console.error('Error fetching constructors:', response);
+      }
+    } catch (err) {
+      setConstructors([]);
+      setConstructorsError('Failed to fetch constructors.');
+      console.error('Error fetching constructors:', err);
+    } finally {
+      setConstructorsLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,12 +61,11 @@ export default function AddBlockedProject() {
     setError(null);
 
     try {
-      // Convert empty contractor name to null before submission
       const submissionData = {
         ...formData,
-        contractor_name: formData.contractor_name.trim() === '' ? null : formData.contractor_name
+        contractor_id: formData.contractor_id ? parseInt(formData.contractor_id, 10) : undefined
       };
-      
+
       const response = await blockedProjectsService.createBlockedProject(submissionData);
       if (response.success) {
         navigate('/blocked-projects');
@@ -114,14 +141,25 @@ export default function AddBlockedProject() {
                 </div>
                 <div className="col-md-6">
                   <label className="form-label">اسم المقاول (اختياري)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="contractor_name"
-                    value={formData.contractor_name}
-                    onChange={handleChange}
-                    placeholder="يمكن ترك هذا الحقل فارغاً"
-                  />
+                  {constructorsLoading ? (
+                    <div>جاري تحميل المقاولين...</div>
+                  ) : constructorsError ? (
+                    <div className="text-danger">فشل في تحميل المقاولين.</div>
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="contractor_id"
+                      value={formData.contractor_id}
+                      onChange={handleChange}
+                    >
+                      <option value="">اختر مقاول (اختياري)</option>
+                      {constructors.map(constructor => (
+                        <option key={constructor.constructor_id} value={constructor.constructor_id}>
+                          {constructor.contractor_name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
                 <div className="col-md-12">
                   <label className="form-label">أسباب التأخير</label>
@@ -182,7 +220,7 @@ export default function AddBlockedProject() {
                   }}
                   onMouseOver={e => (e.currentTarget.style.backgroundColor = '#c6a24b')}
                   onMouseOut={e => (e.currentTarget.style.backgroundColor = '#d4af37')}
-                  disabled={loading}
+                  disabled={loading || constructorsLoading}
                 >
                   {loading ? (
                     <>

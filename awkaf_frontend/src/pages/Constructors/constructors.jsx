@@ -1,32 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { usersService } from "../../services/api";
-import { FaTrash, FaEdit } from 'react-icons/fa';
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.rtl.min.css";
+import "../../styles/custom.css";
+import { constructorsService } from "../../services/api"; // Corrected service import
+import { FaTrash, FaEdit } from 'react-icons/fa'; // Import icons
 
-export default function Users() {
-  const [users, setUsers] = useState([]);
+export default function Constructors() {
+  const [contractors, setConstructors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(3);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // Added pagination state
+  const [itemsPerPage] = useState(3); // Set items per page to 3
+  const [deleteLoading, setDeleteLoading] = useState(false); // Added delete loading state
 
   useEffect(() => {
-    fetchUsers();
+    fetchConstructors();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchConstructors = async () => {
     try {
-      const response = await usersService.getUsers();
-      if (response.success) {
-        setUsers(response.data);
+      setLoading(true);
+      // Using the corrected service name
+      const response = await constructorsService.getConstructors();
+
+      if (response.success && Array.isArray(response.data)) {
+        setConstructors(response.data);
         setError(null);
       } else {
-        setError('فشل في جلب بيانات المستخدمين');
+        console.error('Invalid response format or success false:', response);
+        setConstructors([]);
+        setError('Invalid data format or failed to fetch constructors.');
       }
     } catch (err) {
-      setError('حدث خطأ أثناء جلب بيانات المستخدمين');
-      console.error('Error fetching users:', err);
+      setConstructors([]);
+      setError('حدث خطأ أثناء جلب بيانات المقاولين.');
+      console.error('Error fetching constructors:', err);
     } finally {
       setLoading(false);
     }
@@ -41,26 +49,33 @@ export default function Users() {
     }
   };
 
-  const handleDelete = async (userId) => {
-    if (window.confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+  // Handle contractor deletion
+  const handleDelete = async (contractorId) => {
+    if (window.confirm('هل أنت متأكد من حذف هذا المقاول؟')) {
       try {
-        setDeleteLoading(true);
-        await usersService.deleteUser(userId);
-        setUsers(users.filter(user => user.id !== userId));
-        alert('تم حذف المستخدم بنجاح');
+        setDeleteLoading(true); // Start loading
+        const response = await constructorsService.deleteConstructor(contractorId); // Corrected service name
+        if(response.success) {
+           // Filter out the deleted contractor from the state
+          setConstructors(contractors.filter(contractor => contractor.id !== contractorId));
+          alert('تم حذف المقاول بنجاح'); // Show success message
+        } else {
+          alert('فشل في حذف المقاول'); // Show failure message
+        }
       } catch (err) {
-        console.error('Error deleting user:', err);
-        alert('حدث خطأ أثناء حذف المستخدم');
+        console.error('Error deleting contractor:', err);
+        alert('حدث خطأ أثناء حذف المقاول'); // Show error message
       } finally {
-        setDeleteLoading(false);
+        setDeleteLoading(false); // Stop loading
       }
     }
   };
 
+  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const currentItems = contractors.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(contractors.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -81,9 +96,9 @@ export default function Users() {
       <div className="container">
         <div className="card">
           <div className="card-header d-flex justify-content-between align-items-center">
-            <span>المستخدمين</span>
-            <Link to="/add-user" className="btn btn-sm btn-gold">
-              إضافة مستخدم
+            <span>المقاولون</span>
+            <Link to="/add-constructor" className="btn btn-sm btn-gold">
+              إضافة مقاول جديد
             </Link>
           </div>
           <div className="card-body">
@@ -96,35 +111,34 @@ export default function Users() {
               <table className="table table-bordered table-gold">
                 <thead>
                   <tr>
-                    <th>اسم المستخدم</th>
-                    <th>البريد الإلكتروني</th>
-                    <th>الصلاحية</th>
+                    <th>اسم المقاول</th>
+                    <th>الرقم القومي</th>
+                    <th>معلومات التواصل</th>
                     <th>تاريخ الإنشاء</th>
-                    <th>تاريخ التحديث</th>
                     <th>الإجراءات</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentItems.map((user) => (
-                    <tr key={user.id}>
-                      <td>{user.username}</td>
-                      <td>{user.email}</td>
-                      <td>{user.role === 'admin' ? 'مشرف' : 'مستخدم'}</td>
-                      <td>{formatDate(user.createdAt)}</td>
-                      <td>{formatDate(user.updatedAt)}</td>
-                      
+                  {currentItems.map((constructor) => (
+                    <tr key={constructor.id}>
+                      <td>{constructor.constructor_name}</td>
+                      <td>{constructor.national_id}</td>
+                      <td>{constructor.contact_info}</td>
+                      <td>{formatDate(constructor.created_at)}</td>
                       <td>
                         <div className="btn-group">
-                          <Link
-                            to={`/edit-user/${user.id}`}
+                          {/* Placeholder for Edit Button */}
+                           <Link
+                            to={`/edit-constructor/${constructor.id}`}
                             className="btn btn-sm btn-outline-primary me-1"
                             title="تعديل"
                           >
-                            <FaEdit />
+                             <FaEdit />
                           </Link>
-                          <button 
+                          {/* Delete Button */}
+                          <button
                             className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(user.id)}
+                            onClick={() => handleDelete(constructor.id)}
                             disabled={deleteLoading}
                           >
                             {deleteLoading ? (
@@ -141,7 +155,8 @@ export default function Users() {
               </table>
             </div>
 
-            {totalPages > 1 && (
+            {/* Pagination */}
+            {totalPages > 1 && ( // Conditionally render pagination
               <nav aria-label="Page navigation" className="mt-4">
                 <ul className="pagination justify-content-center">
                   <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>

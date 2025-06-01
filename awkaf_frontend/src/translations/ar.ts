@@ -4,6 +4,7 @@ export interface Translations {
     projects: string;
     mosques: string;
     blockedProjects: string;
+    constructors : string;
   };
   auth: {
     login: string;
@@ -76,7 +77,8 @@ export const ar: Translations = {
     logout: "خروج",
     projects: "المشروعات",
     mosques: "المساجد",
-    blockedProjects: "المشاريع المتعثرة"
+    blockedProjects: "المشاريع المتعثرة",
+    constructors: "المقاولون"
   },
   auth: {
     login: "تسجيل الدخول",

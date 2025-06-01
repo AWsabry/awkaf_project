@@ -32,7 +32,7 @@ const BlockedProject = sequelize.define('BlockedProject', {
         allowNull: true,
         comment: 'أسباب التعثر'
     },
-    contractor_name: {
+    constructor_id: {
         type: DataTypes.STRING(255),
         allowNull: true,
         comment: 'اسم المقاول',
@@ -69,14 +69,14 @@ const BlockedProject = sequelize.define('BlockedProject', {
 
 // CRUD Operations
 const createBlockedProject = async (mosque_name_ar, directorate, mosque_address, contract_date,
-    delay_reasons, contractor_name, actions_taken, latest_update, resolution_status) => {
+    delay_reasons, constructor_id, actions_taken, latest_update, resolution_status) => {
     return await BlockedProject.create({
         mosque_name_ar,
         directorate,
         mosque_address,
         contract_date,
         delay_reasons,
-        contractor_name,
+        constructor_id,
         actions_taken,
         latest_update,
         resolution_status
@@ -88,7 +88,7 @@ const getBlockedProjects = async () => {
 };
 
 const updateBlockedProject = async (delayed_project_id, mosque_name_ar, directorate, mosque_address,
-    contract_date, delay_reasons, contractor_name, actions_taken, latest_update, resolution_status) => {
+    contract_date, delay_reasons, constructor_id, actions_taken, latest_update, resolution_status) => {
     const project = await BlockedProject.findByPk(delayed_project_id);
     if (!project) {
         throw new Error('Blocked project not found');
@@ -99,7 +99,7 @@ const updateBlockedProject = async (delayed_project_id, mosque_name_ar, director
         mosque_address,
         contract_date,
         delay_reasons,
-        contractor_name,
+        constructor_id,
         actions_taken,
         latest_update,
         resolution_status

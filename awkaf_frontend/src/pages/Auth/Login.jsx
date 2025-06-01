@@ -41,8 +41,8 @@ export default function Login() {
           // Add any other user data you want to store
         }));
         
-        // Navigate to projects
-        navigate('/projects');
+        // Navigate to Home page
+        navigate('/');
       } else {
         setError('عذراً، هذا النظام متاح فقط للمشرفين');
       }

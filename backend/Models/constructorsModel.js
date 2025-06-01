@@ -10,7 +10,7 @@ const Constructor = sequelize.define('Constructor', {
     contractor_name: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        unique: true
+        unique: false // Removed the unique constraint
     },
     national_id: {
         type: DataTypes.STRING(255),

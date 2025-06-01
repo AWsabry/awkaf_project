@@ -16,12 +16,12 @@ const {
 router.post('/blocked-projects', async (req, res) => {
   try {
     const { mosque_name_ar, directorate, mosque_address, contract_date, 
-      delay_reasons, contractor_name, actions_taken, latest_update, 
+      delay_reasons, constructor_id, actions_taken, latest_update, 
       resolution_status } = req.body;
     
     const blockedProject = await createBlockedProject(
       mosque_name_ar, directorate, mosque_address, contract_date,
-      delay_reasons, contractor_name, actions_taken, latest_update,
+      delay_reasons, constructor_id, actions_taken, latest_update,
       resolution_status
     );
     
@@ -59,12 +59,12 @@ router.put('/blocked-projects/:delayed_project_id', async (req, res) => {
   try {
     const { delayed_project_id } = req.params;
     const { mosque_name_ar, directorate, mosque_address, contract_date,
-      delay_reasons, contractor_name, actions_taken, latest_update,
+      delay_reasons, constructor_id, actions_taken, latest_update,
       resolution_status } = req.body;
     
     const blockedProject = await updateBlockedProject(
       delayed_project_id, mosque_name_ar, directorate, mosque_address,
-      contract_date, delay_reasons, contractor_name, actions_taken,
+      contract_date, delay_reasons, constructor_id, actions_taken,
       latest_update, resolution_status
     );
     

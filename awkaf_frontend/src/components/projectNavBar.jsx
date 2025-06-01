@@ -48,6 +48,11 @@ export default function ProjectNavBar() {
           <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
+                <Link className="nav-link" to="/" onClick={() => setIsMenuOpen(false)}>
+                  الرئيسية
+                </Link>
+              </li>
+            <li className="nav-item">
                 <Link className="nav-link" to="/users" onClick={() => setIsMenuOpen(false)}>
                   المستخدمين
                 </Link>
@@ -65,6 +70,11 @@ export default function ProjectNavBar() {
               <li className="nav-item">
                 <Link className="nav-link" to="/blocked-projects" onClick={() => setIsMenuOpen(false)}>
                   {ar.navigation.blockedProjects}
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/constructors" onClick={() => setIsMenuOpen(false)}>
+                  {ar.navigation.constructors}
                 </Link>
               </li>
          

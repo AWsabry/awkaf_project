@@ -37,6 +37,13 @@ const API_CONFIG = {
       DELETE: (id) => `/api/users/${id}`,
       DETAILS: (id) => `/api/users/${id}`,
     },
+    CONSTRUCTORS: {
+      LIST: "/api/constructors",
+      CREATE: "/api/constructors",
+      UPDATE: (id) => `/api/constructors/${id}`,
+      DELETE: (id) => `/api/constructors/${id}`,
+      DETAILS: (id) => `/api/constructors/${id}`,
+    },
   },
 };
 

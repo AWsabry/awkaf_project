@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.rtl.min.css";
 import "../../styles/custom.css";
 import { ar } from "../../translations/ar.ts";
-import { blockedProjectsService } from "../../services/api";
+import { blockedProjectsService, constructorsService } from "../../services/api";
 import { FaTrash, FaEdit } from 'react-icons/fa';
 
 export default function BlockedProjects() {
@@ -13,10 +13,35 @@ export default function BlockedProjects() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(3);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [constructors, setConstructors] = useState([]);
+  const [constructorsLoading, setConstructorsLoading] = useState(true);
+  const [constructorsError, setConstructorsError] = useState(null);
 
   useEffect(() => {
     fetchBlockedProjects();
+    fetchConstructors();
   }, []);
+
+  const fetchConstructors = async () => {
+    try {
+      setConstructorsLoading(true);
+      const response = await constructorsService.getConstructors();
+      if (response.success && Array.isArray(response.data)) {
+        setConstructors(response.data);
+        setConstructorsError(null);
+      } else {
+        setConstructors([]);
+        setConstructorsError('Failed to fetch constructors.');
+        console.error('Error fetching constructors:', response);
+      }
+    } catch (err) {
+      setConstructors([]);
+      setConstructorsError('Failed to fetch constructors.');
+      console.error('Error fetching constructors:', err);
+    } finally {
+      setConstructorsLoading(false);
+    }
+  };
 
   const fetchBlockedProjects = async () => {
     try {
@@ -39,6 +64,33 @@ export default function BlockedProjects() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!loading && !constructorsLoading && blockedProjects.length > 0) {
+      const blockedProjectsWithNames = blockedProjects.map(project => {
+        const contractor = constructors.find(con => con.id === project.contractor_id);
+        return {
+          ...project,
+          contractor_name: contractor ? contractor.contractor_name : 'غير محدد'
+        };
+      });
+      setBlockedProjects(blockedProjectsWithNames);
+    }
+    if (!loading && blockedProjects.length > 0) {
+      const blockedProjectsWithNames = blockedProjects.map(project => ({
+        ...project,
+        contractor_name: 'غير محدد'
+      }));
+      setBlockedProjects(blockedProjectsWithNames);
+    }
+    if (!loading && !constructorsLoading && blockedProjects.length > 0 && constructorsError) {
+      const blockedProjectsWithNames = blockedProjects.map(project => ({
+        ...project,
+        contractor_name: 'خطأ في جلب المقاولين'
+      }));
+      setBlockedProjects(blockedProjectsWithNames);
+    }
+  }, [blockedProjects.length, constructors.length, loading, constructorsLoading, constructors, blockedProjects, constructorsError]);
 
   const formatDate = (dateString) => {
     try {
@@ -67,7 +119,7 @@ export default function BlockedProjects() {
       try {
         setDeleteLoading(true);
         await blockedProjectsService.deleteBlockedProject(projectId);
-        setBlockedProjects(blockedProjects.filter(project => project.delayed_project_id !== projectId));
+        setBlockedProjects(prevProjects => prevProjects.filter(project => project.delayed_project_id !== projectId));
         alert('تم حذف المشروع المتعثر بنجاح');
       } catch (err) {
         console.error('Error deleting blocked project:', err);
@@ -78,7 +130,6 @@ export default function BlockedProjects() {
     }
   };
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = blockedProjects.slice(indexOfFirstItem, indexOfLastItem);
@@ -88,7 +139,7 @@ export default function BlockedProjects() {
     setCurrentPage(pageNumber);
   };
 
-  if (loading) {
+  if (loading || constructorsLoading) {
     return (
       <div className="text-center p-5">
         <div className="spinner-border text-gold" role="status">
@@ -117,6 +168,11 @@ export default function BlockedProjects() {
             </Link>
           </div>
           <div className="card-body">
+            {constructorsError && !error && (
+              <div className="alert alert-warning m-3">
+                {constructorsError} عرض المشاريع المتعثرة ممكن بدون أسماء المقاولين.
+              </div>
+            )}
             <div className="table-responsive">
               <table className="table table-bordered table-gold">
                 <thead>
@@ -175,7 +231,6 @@ export default function BlockedProjects() {
               </table>
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <nav aria-label="Page navigation" className="mt-4">
                 <ul className="pagination justify-content-center">

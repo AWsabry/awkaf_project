@@ -238,4 +238,41 @@ body {
   .table-gold tbody td {
     padding: 0.75rem;
   }
+}
+
+/* Home page block styles */
+.home-block {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+}
+
+.home-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--gold-primary);
+}
+
+.home-block .card-body {
+  padding: 2rem;
+}
+
+.home-block .card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.home-block .text-gold {
+  color: var(--gold-primary);
+}
+
+@media (max-width: 768px) {
+  .home-block .card-body {
+    padding: 1.5rem;
+  }
+
+  .home-block .card-title {
+    font-size: 1rem;
+  }
 } 

@@ -23,9 +23,12 @@ router.post('/constructors', async (req, res) => {
       contact_info
     );
     
-    res.status(201).json({
+    console.log('Constructor created:', constructor);
+    
+
+    res.status(200).json({
       success: true,
-      message: STATIC_STRINGS.OPERATIONS.SUCCESS,
+      message: STATIC_STRINGS.OPERATIONS.ADD_SUCCESS,
       data: constructor
     });
   } catch (error) {

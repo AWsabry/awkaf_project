@@ -119,4 +119,24 @@ export const usersService = {
   }
 };
 
+// Constructors Services
+export const constructorsService = {
+  getConstructors: async () => {
+    const response = await api.get(API_CONFIG.ENDPOINTS.CONSTRUCTORS.LIST);
+    return response.data;
+  },
+  createConstructor: async (constructorData) => {
+    const response = await api.post(API_CONFIG.ENDPOINTS.CONSTRUCTORS.CREATE, constructorData);
+    return response.data;
+  },
+  updateConstructor: async (id, constructorData) => {
+    const response = await api.put(API_CONFIG.ENDPOINTS.CONSTRUCTORS.UPDATE(id), constructorData);
+    return response.data;
+  },
+  deleteConstructor: async (id) => {
+    const response = await api.delete(API_CONFIG.ENDPOINTS.CONSTRUCTORS.DELETE(id));
+    return response.data;
+  },
+};
+
 export default api; 
